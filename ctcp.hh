@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <thread>
+#include <type_traits>
 
 #include "ccc.hh"
 #include "remycc.hh"
@@ -84,6 +85,8 @@ public:
 
   //duration in milliseconds
   void send_data ( double flow_size, bool byte_switched, int flow_id, int src_id );
+  void congctrl_init ();
+  void send_data ( const char* data, ssize_t size, int flow_id, int src_id );
 
   void listen_for_data ( );
 };
@@ -318,6 +321,187 @@ void CTCP<T>::send_data( double flow_size, bool byte_switched, int flow_id, int 
 
   if( LINK_LOGGING )
     link_logfile.close();
+}
+
+template<class T>
+void CTCP<T>::congctrl_init() {
+    if(std::is_same<T,MarkovianCC>::value) {
+        congctrl.interpret_config_str("do_ss:auto:0.1");
+    }
+    congctrl.init();
+}
+
+// provide a socket like interface to send data
+template<class T>
+void CTCP<T>::send_data( const char* data, ssize_t size, int flow_id, int src_id ){
+
+    TCPHeader header, ack_header;
+
+    // this is the data that is transmitted. A sizeof(TCPHeader) header followed by real data
+    char buf[packet_size];
+    int user_bytes_to_send;
+//    memset(buf, '-', sizeof(char)*packet_size);
+//    buf[packet_size-1] = '\0';
+
+    // for link logging
+    ofstream link_logfile;
+    if( LINK_LOGGING )
+        link_logfile.open( LINK_LOGGING_FILENAME, ios::out | ios::app );
+
+    // for flow control
+    int seq_num = 0;
+    _largest_ack = -1;
+
+    // for estimating bottleneck link rate
+    double link_rate_estimate = 0.0;
+    double last_recv_time = 0.0;
+
+    // for maintaining performance statistics
+    double delay_sum = 0;
+    int num_packets_transmitted = 0;
+    int transmitted_bytes = 0;
+
+    cout << "Assuming training link rate of: " << TRAINING_LINK_RATE << " pkts/sec" << endl;
+
+    // Get min_rtt from outside
+    // const char* min_rtt_c = getenv("MIN_RTT");
+    // if (min_rtt_c != 0)
+    //   congctrl.set_min_rtt(atof(min_rtt_c));
+
+    // For computing timeouts
+    tcp_handshake();
+
+    chrono::high_resolution_clock::time_point start_time_point = chrono::high_resolution_clock::now();
+    double cur_time = current_timestamp( start_time_point );
+    _last_send_time = cur_time;
+    double last_ack_time = cur_time;
+
+    cur_time = current_timestamp( start_time_point );
+    congctrl.set_timestamp(cur_time);
+    //congctrl.init();
+
+    while (transmitted_bytes < size) {
+        cur_time = current_timestamp( start_time_point );
+        if (cur_time - last_ack_time > 2000) {
+            std::cerr << "Timeout" << std::endl;
+            congctrl.set_timestamp(cur_time);
+            congctrl.init();
+            _largest_ack = seq_num - 1;
+            _last_send_time = cur_time;
+            last_ack_time = cur_time; // So we don't timeout repeatedly
+        }
+        // Warning: The number of unacknowledged packets may exceed the congestion window by num_packets_per_link_rate_measurement
+        while (((seq_num < _largest_ack + 1 + congctrl.get_the_window()) &&
+                (_last_send_time + congctrl.get_intersend_time() * train_length <= cur_time) && transmitted_bytes < size ) ||
+               (seq_num % train_length != 0)) {
+            header.seq_num = seq_num;
+            header.flow_id = flow_id;
+            header.src_id = src_id;
+            header.sender_timestamp = cur_time;
+            header.receiver_timestamp = 0;
+            memcpy( buf, &header, sizeof(TCPHeader) );
+            if (size - transmitted_bytes >= data_size)
+                user_bytes_to_send = data_size;
+            else
+                user_bytes_to_send = size - transmitted_bytes;
+            memcpy( buf + sizeof(TCPHeader), data + transmitted_bytes, user_bytes_to_send);
+            socket.senddata( buf, user_bytes_to_send + sizeof(TCPHeader), NULL );
+            _last_send_time += congctrl.get_intersend_time();
+
+            if (seq_num % train_length == 0) {
+                congctrl.set_timestamp(cur_time);
+                congctrl.onPktSent( header.seq_num / train_length );
+            }
+
+            seq_num++;
+            transmitted_bytes += user_bytes_to_send;
+            this->tot_bytes_transmitted += user_bytes_to_send;
+        }
+        if (cur_time - _last_send_time >= congctrl.get_intersend_time() * train_length ||
+            seq_num >= _largest_ack + congctrl.get_the_window()) {
+            // Hopeless. Stop trying to compensate.
+            _last_send_time = cur_time;
+        }
+
+        cur_time = current_timestamp( start_time_point );
+        double timeout = _last_send_time + 1000; //congctrl.get_timeout(); // everything in milliseconds
+        if(congctrl.get_the_window() > 0)
+            timeout = min( 1000.0, _last_send_time + congctrl.get_intersend_time()*train_length - cur_time );
+
+        sockaddr_in other_addr;
+        if(socket.receivedata(buf, packet_size, timeout, other_addr) == 0) {
+            cur_time = current_timestamp(start_time_point);
+            if(cur_time > _last_send_time + congctrl.get_timeout())
+                congctrl.onTimeout();
+            continue;
+        }
+
+        memcpy(&ack_header, buf, sizeof(TCPHeader));
+        ack_header.seq_num++; // because the receiver doesn't do that for us yet
+
+        if (ack_header.src_id != src_id || ack_header.flow_id != flow_id){
+            if(ack_header.src_id != src_id ){
+                std::cerr<<"Received incorrect ack for src "<<ack_header.src_id<<" to "<<src_id<<" for flow "<<ack_header.flow_id<<" to "<<flow_id<<endl;
+            }
+            continue;
+        }
+        cur_time = current_timestamp( start_time_point );
+        last_ack_time = cur_time;
+
+        // Estimate link rate
+        if ((ack_header.seq_num - 1) % train_length != 0 && last_recv_time != 0.0) {
+            double alpha = 1 / 16.0;
+            if (link_rate_estimate == 0.0)
+                link_rate_estimate = 1 * (cur_time - last_recv_time);
+            else
+                link_rate_estimate = (1 - alpha) * link_rate_estimate + alpha * (cur_time - last_recv_time);
+            // Use estimate only after enough datapoints are available
+            if (ack_header.seq_num > 2 * train_length)
+                congctrl.onLinkRateMeasurement(1e3 / link_rate_estimate );
+        }
+        last_recv_time = cur_time;
+
+        // Track performance statistics
+        delay_sum += cur_time - ack_header.sender_timestamp;
+        this->tot_delay += cur_time - ack_header.sender_timestamp;
+
+        //transmitted_bytes += data_size;
+        //this->tot_bytes_transmitted += data_size;
+
+        num_packets_transmitted += 1;
+        this->tot_packets_transmitted += 1;
+
+        if ((ack_header.seq_num - 1) % train_length == 0) {
+            congctrl.set_timestamp(cur_time);
+            congctrl.onACK(ack_header.seq_num / train_length,
+                           ack_header.receiver_timestamp,
+                           ack_header.sender_timestamp);
+        }
+#ifdef SCALE_SEND_RECEIVE_EWMA
+        //assert(false);
+#endif
+
+        _largest_ack = max(_largest_ack, ack_header.seq_num);
+    }
+
+    cur_time = current_timestamp( start_time_point );
+
+    congctrl.set_timestamp(cur_time);
+    //congctrl.close();
+
+    this->tot_time_transmitted += cur_time;
+
+    double throughput = transmitted_bytes/( cur_time / 1000.0 );
+    double delay = (delay_sum / 1000) / num_packets_transmitted;
+
+    std::cout<<"\n\nData Successfully Transmitted\n\tThroughput: "<<throughput<<" bytes/sec\n\tAverage Delay: "<<delay<<" sec/packet\n\tCompletion time: " << cur_time / 1000.0 << "sec\n";
+
+    double avg_throughput = tot_bytes_transmitted / ( tot_time_transmitted / 1000.0);
+    double avg_delay = (tot_delay / 1000) / tot_packets_transmitted;
+    std::cout<<"\n\tAvg. Throughput: "<<avg_throughput<<" bytes/sec\n\tAverage Delay: "<<avg_delay<<" sec/packet\n";
+
+    if( LINK_LOGGING )
+        link_logfile.close();
 }
 
 template<class T>

@@ -12,6 +12,7 @@
 
 #include "tcp-header.hh"
 #include "udp-socket.hh"
+#include "generic-receiver.hh"
 
 #define BUFFSIZE 15000
 
@@ -95,15 +96,24 @@ void echo_packets(UDPSocket &sender_socket) {
 }
 
 int main(int argc, char* argv[]) {
-	int port = 8888;
-	if (argc == 2)
-		port = atoi(argv[1]);
+//	int port = 8888;
+//	if (argc == 2)
+//		port = atoi(argv[1]);
+//
+//	UDPSocket sender_socket;
+//	sender_socket.bindsocket(port);
+//
+//	//thread nat_thread(punch_NAT, nat_ip_addr, ref(sender_socket));
+//	echo_packets(sender_socket);
 
-	UDPSocket sender_socket;
-	sender_socket.bindsocket(port);
-	
-	//thread nat_thread(punch_NAT, nat_ip_addr, ref(sender_socket));
-	echo_packets(sender_socket);
+    int port = 8888;
+    int num;
+    char databuf[15000];
+    Receiver receiver(port);
+    while(1) {
+        num = receiver.recvfrom();
+        cout << "received "<< num << " Bytes" << endl;
+    }
 
 	return 0;
 }
