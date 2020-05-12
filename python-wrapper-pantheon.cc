@@ -19,7 +19,7 @@ double TRAINING_LINK_RATE = 4000000.0/1500.0;
 using namespace std;
 namespace py = pybind11;
 
-PYBIND11_MODULE(pygenericCC, m) {
+PYBIND11_MODULE(pygenericcc, m) {
 //    py::class_<COPASender>(m, "COPASender")
 //        .def(py::init<string, int, int>())
 //        .def("send", &COPASender::send);
