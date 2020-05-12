@@ -133,7 +133,8 @@ void CTCP<T>::tcp_handshake() {
     double cur_time = current_timestamp(start_time_point);
     if (last_send_time < cur_time - 200) {
       memcpy( buf, &header, sizeof(TCPHeader) );
-      socket.senddata( buf, sizeof(TCPHeader) * 2, NULL );
+      //socket.senddata( buf, sizeof(TCPHeader) * 2, NULL );
+        socket.senddata( buf, sizeof(TCPHeader), NULL );
 
       if (last_send_time != -1e9)
         multi_send = true;
