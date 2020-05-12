@@ -87,7 +87,7 @@ public:
   //duration in milliseconds
   void send_data ( double flow_size, bool byte_switched, int flow_id, int src_id );
   void congctrl_init ();
-  void send_data ( const char* data, ssize_t size, int flow_id, int src_id );
+  void send_data ( const char* data, int size, int flow_id, int src_id );
 
   void listen_for_data ( );
 };
