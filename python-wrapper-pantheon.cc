@@ -10,7 +10,7 @@ PYBIND11_MODULE(pygenericCC, m) {
         .def(py::init<string, int, int>())
         .def("send", &COPASender::send);
 
-    py::class_<Receiver>(m, "Receiver")
-        .def(py::init<int>())
-        .def("recvfrom", &Receiver::recvfrom);
+//    py::class_<Receiver>(m, "Receiver")
+//        .def(py::init<int>())
+//        .def("recvfrom", &Receiver::recvfrom);
 }
