@@ -1,6 +1,6 @@
 pMEMORY_STYLE := ./protobufs-default
 
-CXX := gcc
+CXX := g++
 CXXFLAGS := -DHAVE_CONFIG_H -std=c++11 -pthread -pedantic -Wall -Wextra -Weffc++ -Werror -fno-default-inline -g -O2 -fPIC
 INCLUDES :=	-I./protobufs-default -I./udt
 
@@ -37,7 +37,7 @@ python-wrapper.o: python-wrapper.cc
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $(input) -o $(output)
 
 pygenericCC.so:
-    $(CXX) -shared python-wrapper-pantheon.o $(OBJECTS) -o pygenericCC.so
+    $(CXX) -shared python-wrapper-pantheon.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericCC.so
 
 # pygenericcc.so:
 # 	$(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericcc.so -lpython2.7 -lboost_python $(LIBS)
