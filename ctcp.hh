@@ -18,7 +18,7 @@
 using namespace std;
 
 #define packet_size 1440
-#define data_size (packet_size-sizeof(TCPHeader))
+#define data_size int(packet_size-sizeof(TCPHeader))
 
 template <class T>
 class CTCP {
