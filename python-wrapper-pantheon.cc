@@ -18,6 +18,9 @@
 //        .def("recvfrom", &Receiver::recvfrom);
 //}
 
+// For Remy
+double TRAINING_LINK_RATE = 4000000.0/1500.0;
+
 BOOST_PYTHON_MODULE(pygenericcc){
     using namespace boost::python;
     class_<Receiver>("Receiver", init<int>())
