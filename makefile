@@ -28,7 +28,7 @@ receiver: receiver.o udp-socket.o
 	$(CXX) $(inputs) -o $(output) $(LIBS)
 
 python-wrapper-pantheon.o: python-wrapper-pantheon.cc
-    $(CXX) $(INCLUDES) -O3 -Wall -std=c++11 -fPIC `python -m pybind11 --includes` -c python-wrapper-pantheon.cc -o python-wrapper-pantheon.o
+    $(CXX) -I/usr/include/python2.7 $(INCLUDES) -O3 -Wall -std=c++11 -fPIC `python -m pybind11 --includes` -c python-wrapper-pantheon.cc -o python-wrapper-pantheon.o
 
 python-wrapper.o: python-wrapper.cc
 	$(CXX) -I/usr/include/python2.7 $(INCLUDES) -fPIC $(CXXFLAGS) -c python-wrapper.cc -o python-wrapper.o
