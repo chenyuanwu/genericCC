@@ -10,6 +10,9 @@
 // For Remy
 double TRAINING_LINK_RATE = 4000000.0/1500.0;
 
+bool LINK_LOGGING = false;
+std::string LINK_LOGGING_FILENAME;
+
 //BOOST_PYTHON_MODULE(pygenericcc){
 //    using namespace boost::python;
 //    class_<Receiver>("Receiver", init<int>())
