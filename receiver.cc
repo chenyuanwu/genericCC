@@ -107,12 +107,11 @@ int main() {
 //	echo_packets(sender_socket);
 
     int port = 8888;
-    int num;
-    char databuf[15000];
+    string s;
     Receiver receiver(port);
     while(1) {
-        num = receiver.recvfrom(databuf);
-        cout << "received "<< num << " Bytes" << endl;
+        s = receiver.recvfrom();
+        cout << "received "<< s.length() << " Bytes" << endl;
     }
 
 	return 0;

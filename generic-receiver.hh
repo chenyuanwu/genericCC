@@ -22,7 +22,7 @@ public:
         sender_socket.bindsocket(port);
     }
 
-    int recvfrom(char* databuf) {
+    string recvfrom() {
         char buff[BUFFSIZE];
         sockaddr_in sender_addr;
 
@@ -46,8 +46,9 @@ public:
             sender_socket.senddata(buff, sizeof(TCPHeader), &sender_addr);
             //socket_lock.unlock();
             if (received - sizeof(TCPHeader) > 0) {
-                memcpy(databuf, buff + sizeof(TCPHeader), received - sizeof(TCPHeader));
-                return (received - sizeof(TCPHeader));
+                //memcpy(databuf, buff + sizeof(TCPHeader), received - sizeof(TCPHeader));
+                //return (received - sizeof(TCPHeader));
+                return string(buff + sizeof(TCPHeader), received - sizeof(TCPHeader));
             }
         }
     }
