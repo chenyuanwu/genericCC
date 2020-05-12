@@ -37,7 +37,7 @@ python-wrapper.o: python-wrapper.cc
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $(input) -o $(output)
 
 pygenericCC.so:
-    $(CXX) -shared python-wrapper-pantheon.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericCC.so
+    $(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper-pantheon.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericCC.so
 
 # pygenericcc.so:
 # 	$(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericcc.so -lpython2.7 -lboost_python $(LIBS)
