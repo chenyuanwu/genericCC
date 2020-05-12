@@ -11,6 +11,7 @@
 
 #include "ccc.hh"
 #include "remycc.hh"
+#include "markoviancc.hh"
 #include "tcp-header.hh"
 #include "udp-socket.hh"
 
@@ -333,7 +334,7 @@ void CTCP<T>::congctrl_init() {
 
 // provide a socket like interface to send data
 template<class T>
-void CTCP<T>::send_data( const char* data, ssize_t size, int flow_id, int src_id ){
+void CTCP<T>::send_data( const char* data, int size, int flow_id, int src_id ){
 
     TCPHeader header, ack_header;
 
