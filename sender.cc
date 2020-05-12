@@ -169,6 +169,7 @@ int main() {
     memset(data, '-', sizeof(char)*20000);
     COPASender sender(serverip, serverport, sourceport);
     sender.send(data, 20000, 1);
+    sender.send(data, 20000, 1);
 
 
 }
