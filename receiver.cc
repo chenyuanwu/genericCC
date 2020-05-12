@@ -95,7 +95,7 @@ void echo_packets(UDPSocket &sender_socket) {
 	}
 }
 
-int main(int argc, char* argv[]) {
+int main() {
 //	int port = 8888;
 //	if (argc == 2)
 //		port = atoi(argv[1]);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     char databuf[15000];
     Receiver receiver(port);
     while(1) {
-        num = receiver.recvfrom();
+        num = receiver.recvfrom(databuf);
         cout << "received "<< num << " Bytes" << endl;
     }
 
