@@ -8,7 +8,7 @@ LIBS     := -ljemalloc -lm -pthread -lprotobuf -lpthread -ljemalloc
 #$(MEMORY_STYLE)/libremyprotos.a
 OBJECTS  := random.o memory.o memoryrange.o rat.o whisker.o whiskertree.o udp-socket.o traffic-generator.o remycc.o markoviancc.o estimators.o rtt-window.o #protobufs-default/dna.pb.o
 
-all: sender receiver
+all: sender receiver pygenericcc.so
 
 .PHONY: all
 
@@ -28,19 +28,13 @@ receiver: receiver.o udp-socket.o
 	$(CXX) $(inputs) -o $(output) $(LIBS)
 
 python-wrapper-pantheon.o: python-wrapper-pantheon.cc
-    $(CXX) -I/usr/include/python2.7 $(INCLUDES) -O3 -Wall -std=c++11 -fPIC `python -m pybind11 --includes` -c python-wrapper-pantheon.cc -o python-wrapper-pantheon.o
-
-python-wrapper.o: python-wrapper.cc
-	$(CXX) -I/usr/include/python2.7 $(INCLUDES) -fPIC $(CXXFLAGS) -c python-wrapper.cc -o python-wrapper.o
+	$(CXX) -I/usr/include/python2.7 $(INCLUDES) -fPIC $(CXXFLAGS) -c python-wrapper-pantheon.cc -o python-wrapper-pantheon.o
 
 %.o: %.cc
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $(input) -o $(output)
 
-pygenericCC.so:
-    $(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper-pantheon.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericCC.so
-
-# pygenericcc.so:
-# 	$(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericcc.so -lpython2.7 -lboost_python $(LIBS)
+pygenericcc.so:
+	$(CXX) -shared -Wl,--export-dynamic -Wl,--no-undefined python-wrapper-pantheon.o $(OBJECTS) protobufs-default/dna.pb.o -o pygenericcc.so -lpython2.7 -lboost_python $(LIBS)
 
 pcc-tcp.o: pcc-tcp.cc
 	$(CXX) -DHAVE_CONFIG_H -I. -I./udt -std=c++11 -pthread         -fno-default-inline -g -O2 -MT pcc-tcp.o -MD -MP -c -o pcc-tcp.o pcc-tcp.cc 
