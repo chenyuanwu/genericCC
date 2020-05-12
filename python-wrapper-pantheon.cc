@@ -5,7 +5,7 @@
 using namespace std;
 namespace py = pybind11;
 
-PYBIND11_MODULE(genericCC, m) {
+PYBIND11_MODULE(pygenericCC, m) {
     py::class_<COPASender>(m, "COPASender")
         .def(py::init<string, int, int>())
         .def("send", &COPASender::send);
