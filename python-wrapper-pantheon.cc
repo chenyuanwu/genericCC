@@ -20,6 +20,6 @@
 
 BOOST_PYTHON_MODULE(pygenericcc){
     using namespace boost::python;
-    class_<COPASender>("COPASender", init<std::string, int, int>())
-      .def("send", &COPASender::send);
+    class_<Receiver>("Receiver", init<int>())
+      .def("recvfrom", &Receiver::recvfrom);
 }
