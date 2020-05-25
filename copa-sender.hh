@@ -12,7 +12,7 @@
 
 using namespace std;
 
-MarkovianCC parse_copa_config(string delta_config) {
+MarkovianCC parse_copa_config(string delta_conf) {
     MarkovianCC congctrl(1.0);
     congctrl.interpret_config_str(delta_conf);
     return congctrl;
