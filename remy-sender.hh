@@ -33,7 +33,8 @@ RemyCC parse_remy_config(string filename) {
         perror( "close" );
         exit( 1 );
     }
-    return RemyCC(whiskers);
+    RemyCC congctrl( whiskers );
+    return congctrl;
 }
 
 class REMYSender {

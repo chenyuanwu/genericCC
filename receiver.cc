@@ -96,23 +96,23 @@ void echo_packets(UDPSocket &sender_socket) {
 }
 
 int main(int argc, char *argv[]) {
-	int port = 8888;
-	if (argc == 2)
-		port = atoi(argv[1]);
+//	int port = 8888;
+//	if (argc == 2)
+//		port = atoi(argv[1]);
+//
+//	UDPSocket sender_socket;
+//	sender_socket.bindsocket(port);
+//
+//	//thread nat_thread(punch_NAT, nat_ip_addr, ref(sender_socket));
+//	echo_packets(sender_socket);
 
-	UDPSocket sender_socket;
-	sender_socket.bindsocket(port);
-
-	//thread nat_thread(punch_NAT, nat_ip_addr, ref(sender_socket));
-	echo_packets(sender_socket);
-
-//    int port = 8888;
-//    string s;
-//    Receiver receiver(port);
-//    while(1) {
-//        s = receiver.recvfrom();
-//        cout << "received "<< s.length() << " Bytes" << endl;
-//    }
+    int port = 8888;
+    string s;
+    Receiver receiver(port);
+    while(1) {
+        s = receiver.recvfrom();
+        cout << "received "<< s.length() << " Bytes" << endl;
+    }
 
 	return 0;
 }
