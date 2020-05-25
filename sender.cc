@@ -8,6 +8,7 @@
 #include "markoviancc.hh"
 #include "traffic-generator.hh"
 #include "copa-sender.hh"
+#include "remy-sender.hh"
 
 // see configs.hh for details
 double TRAINING_LINK_RATE = 4000000.0/1500.0;
@@ -167,7 +168,7 @@ int main() {
 
     char data[20000];
     memset(data, '-', sizeof(char)*20000);
-    COPASender sender(serverip, serverport, sourceport);
+    REMYSender sender(serverip, serverport, sourceport);
     sender.send(data, 20000, 1);
     sender.send(data, 20000, 1);
 
