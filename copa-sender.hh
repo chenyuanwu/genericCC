@@ -12,13 +12,19 @@
 
 using namespace std;
 
+MarkovianCC parse_copa_config(string delta_config) {
+    MarkovianCC congctrl(1.0);
+    congctrl.interpret_config_str(delta_conf);
+    return congctrl;
+}
+
 class COPASender {
 private:
     CTCP< MarkovianCC > connection;
     int src_id;
 public:
     COPASender(string serverip, int serverport, int sourceport)
-      : connection(MarkovianCC(1.0), serverip, serverport, sourceport, 1), src_id()
+      : connection(parse_copa_config("do_ss:auto:0.1"), serverip, serverport, sourceport, 1), src_id()
     {
         connection.congctrl_init();
 

@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <iostream>
 #include <thread>
-#include <type_traits>
 
 #include "ccc.hh"
 #include "remycc.hh"
@@ -327,9 +326,6 @@ void CTCP<T>::send_data( double flow_size, bool byte_switched, int flow_id, int 
 
 template<class T>
 void CTCP<T>::congctrl_init() {
-    if(std::is_same<T,MarkovianCC>::value) {
-        congctrl.interpret_config_str("do_ss:auto:0.1");
-    }
     congctrl.init();
 }
 
