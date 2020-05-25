@@ -168,7 +168,7 @@ int main() {
 
     char data[20000];
     memset(data, '-', sizeof(char)*20000);
-    REMYSender sender(serverip, serverport, sourceport);
+    COPASender sender(serverip, serverport, sourceport);
     sender.send(data, 20000, 1);
     sender.send(data, 20000, 1);
 
