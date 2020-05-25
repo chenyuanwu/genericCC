@@ -95,7 +95,7 @@ void echo_packets(UDPSocket &sender_socket) {
 	}
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 	int port = 8888;
 	if (argc == 2)
 		port = atoi(argv[1]);
