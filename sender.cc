@@ -81,7 +81,7 @@ int main( int argc, char *argv[] ) {
 			}
 
 			whiskers = WhiskerTree( tree );
-			ratFound = true;
+			//ratFound = true;
 
 			if ( close( fd ) < 0 ) {
 				perror( "close" );
