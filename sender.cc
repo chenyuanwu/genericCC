@@ -15,7 +15,7 @@ double TRAINING_LINK_RATE = 4000000.0/1500.0;
 bool LINK_LOGGING = false;
 std::string LINK_LOGGING_FILENAME;
 
-RemyCC parse_remy_config(string filename) {
+WhiskerTree parse_remy_config(string filename) {
     WhiskerTree whiskers;
     int fd = open( filename.c_str(), O_RDONLY );
     if ( fd < 0 ) {
@@ -37,8 +37,7 @@ RemyCC parse_remy_config(string filename) {
         perror( "close" );
         exit( 1 );
     }
-    RemyCC congctrl( whiskers );
-    return congctrl;
+    return whiskers;
 }
 
 int main( int argc, char *argv[] ) {
@@ -149,7 +148,7 @@ int main( int argc, char *argv[] ) {
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
 
-        CTCP< RemyCC > connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, train_length );
+        CTCP< RemyCC > connection(RemyCC(parse_remy_config("RemyCC-2014-100x.dna")), serverip, serverport, sourceport, train_length );
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.congctrl_init();
