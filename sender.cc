@@ -44,7 +44,7 @@ RemyCC parse_remy_config(string filename) {
 int main( int argc, char *argv[] ) {
 	Memory temp;
 	WhiskerTree whiskers;
-	bool ratFound = false;
+	//bool ratFound = false;
 
 	string serverip = "";
 	int serverport=8888;
