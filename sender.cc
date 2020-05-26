@@ -124,6 +124,8 @@ int main( int argc, char *argv[] ) {
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.send_data(data, 20000, 1, 1234);
+        connection.send_data(data, 20000, 1, 1234);
+        connection.send_data(data, 20000, 1, 1234);
 	}
 	else if( cctype == CCType::TCPCC ) {
 		fprintf( stdout, "Using UDT's TCP CC.\n" );
