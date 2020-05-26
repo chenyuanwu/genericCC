@@ -8,7 +8,7 @@
 #include "markoviancc.hh"
 #include "traffic-generator.hh"
 #include "copa-sender.hh"
-#include "remy-sender.hh"
+//#include "remy-sender.hh"
 
 // see configs.hh for details
 double TRAINING_LINK_RATE = 4000000.0/1500.0;
