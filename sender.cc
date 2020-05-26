@@ -121,7 +121,6 @@ int main( int argc, char *argv[] ) {
 		CTCP< RemyCC > connection( congctrl, serverip, serverport, sourceport, train_length );
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
-        serverip = "34.73.231.168";
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.send_data(data, 20000, 1, 1234);
