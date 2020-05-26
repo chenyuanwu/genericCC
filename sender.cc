@@ -144,12 +144,12 @@ int main( int argc, char *argv[] ) {
 
 	if( cctype == CCType::REMYCC) {
 		fprintf( stdout, "Using RemyCC.\n" );
-		RemyCC congctrl( whiskers );
-		CTCP< RemyCC > connection( congctrl, serverip, serverport, sourceport, train_length );
+		//RemyCC congctrl( whiskers );
+		//CTCP< RemyCC > connection( congctrl, serverip, serverport, sourceport, train_length );
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
 
-        //CTCP< RemyCC > connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, train_length );
+        CTCP< RemyCC > connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, train_length );
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.congctrl_init();
