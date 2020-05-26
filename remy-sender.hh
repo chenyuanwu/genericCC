@@ -14,7 +14,6 @@
 using namespace std;
 
 RemyCC parse_remy_config(string filename) {
-    Memory temp;
     WhiskerTree whiskers;
     int fd = open( filename.c_str(), O_RDONLY );
     if ( fd < 0 ) {
