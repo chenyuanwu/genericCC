@@ -1,5 +1,6 @@
 #ifndef GENERICCC_REMY_SENDER_HH
 #define GENERICCC_REMY_SENDER_HH
+#include <chrono>
 #include <fcntl.h>
 
 #include <string.h>
@@ -8,15 +9,13 @@
 #include "random.hh"
 #include "remycc.hh"
 #include "ctcp.hh"
-#include "markoviancc.hh"
 
-
-using namespace std;
 
 RemyCC parse_remy_config(string filename) {
     WhiskerTree whiskers;
     int fd = open( filename.c_str(), O_RDONLY );
     if ( fd < 0 ) {
+        fprintf( stderr, "Error in open %s.\n", filename.c_str() );
         perror( "open" );
         exit( 1 );
     }
@@ -30,6 +29,7 @@ RemyCC parse_remy_config(string filename) {
     whiskers = WhiskerTree( tree );
 
     if ( close( fd ) < 0 ) {
+        fprintf( stderr, "Error in close %s.\n", filename.c_str() );
         perror( "close" );
         exit( 1 );
     }
