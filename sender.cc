@@ -61,31 +61,32 @@ int main( int argc, char *argv[] ) {
 	for ( int i = 1; i < argc; i++ ) {
 		std::string arg( argv[ i ] );
 		if ( arg.substr( 0, 3 ) == "if=" ) {
-//			if( cctype != REMYCC ) {
-//				fprintf( stderr, "Warning: ignoring parameter 'if=' as cctype is not 'remy'.\n" );
-//				continue;
-//			}
-//
-//			std::string filename( arg.substr( 3 ) );
-//			int fd = open( filename.c_str(), O_RDONLY );
-//			if ( fd < 0 ) {
-//				perror( "open" );
-//				exit( 1 );
-//			}
-//
-//			RemyBuffers::WhiskerTree tree;
-//			if ( !tree.ParseFromFileDescriptor( fd ) ) {
-//				fprintf( stderr, "Could not parse %s.\n", filename.c_str() );
-//				exit( 1 );
-//			}
-//
-//			whiskers = WhiskerTree( tree );
-//			ratFound = true;
-//
-//			if ( close( fd ) < 0 ) {
-//				perror( "close" );
-//				exit( 1 );
-//			}
+			if( cctype != REMYCC ) {
+				fprintf( stderr, "Warning: ignoring parameter 'if=' as cctype is not 'remy'.\n" );
+				continue;
+			}
+
+			//std::string filename( arg.substr( 3 ) );
+            std::string filename("RemyCC-2014-100x.dna");
+			int fd = open( filename.c_str(), O_RDONLY );
+			if ( fd < 0 ) {
+				perror( "open" );
+				exit( 1 );
+			}
+
+			RemyBuffers::WhiskerTree tree;
+			if ( !tree.ParseFromFileDescriptor( fd ) ) {
+				fprintf( stderr, "Could not parse %s.\n", filename.c_str() );
+				exit( 1 );
+			}
+
+			whiskers = WhiskerTree( tree );
+			ratFound = true;
+
+			if ( close( fd ) < 0 ) {
+				perror( "close" );
+				exit( 1 );
+			}
 		}
 		else if( arg.substr( 0, 9 ) == "serverip=" )
 			serverip = arg.substr( 9 );
@@ -142,13 +143,13 @@ int main( int argc, char *argv[] ) {
 //	}
 
 	if( cctype == CCType::REMYCC) {
-		//fprintf( stdout, "Using RemyCC.\n" );
-		//RemyCC congctrl( whiskers );
-		//CTCP< RemyCC > connection( congctrl, serverip, serverport, sourceport, train_length );
+		fprintf( stdout, "Using RemyCC.\n" );
+		RemyCC congctrl( whiskers );
+		CTCP< RemyCC > connection( congctrl, serverip, serverport, sourceport, train_length );
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
 
-        CTCP< RemyCC > connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, train_length );
+        //CTCP< RemyCC > connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, train_length );
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.congctrl_init();
