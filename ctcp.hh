@@ -23,9 +23,9 @@ template <class T>
 class CTCP {
 public:
   enum ConnectionType{ SENDER, RECEIVER };
+  T congctrl;
 
 private:
-  T congctrl;
   UDPSocket socket;
   ConnectionType conntype;
 
