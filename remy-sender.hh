@@ -45,7 +45,7 @@ public:
     REMYSender(string serverip, int serverport, int sourceport)
             : connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, 1), src_id()
     {
-        //connection.congctrl_init();
+        connection.congctrl_init();
 
         PRNG prng(global_PRNG());
         src_id = boost::random::uniform_int_distribution<>()(prng);
