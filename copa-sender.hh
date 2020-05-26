@@ -23,8 +23,8 @@ private:
     CTCP< MarkovianCC > connection;
     int src_id;
 public:
-    COPASender(string serverip, int serverport, int sourceport)
-      : connection(parse_copa_config("do_ss:auto:0.1"), serverip, serverport, sourceport, 1), src_id()
+    COPASender(string delta_config, string serverip, int serverport, int sourceport)
+      : connection(parse_copa_config(delta_config), serverip, serverport, sourceport, 1), src_id()
     {
         connection.congctrl_init();
 

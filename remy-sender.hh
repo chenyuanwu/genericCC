@@ -44,8 +44,8 @@ private:
     CTCP< RemyCC > connection;
     int src_id;
 public:
-    REMYSender(string serverip, int serverport, int sourceport)
-            : whiskers(parse_remy_config("RemyCC-2014-100x.dna")), congctrl(whiskers), connection(congctrl, serverip, serverport, sourceport, 1), src_id()
+    REMYSender(string rat, string serverip, int serverport, int sourceport)
+        : whiskers(parse_remy_config(rat)), congctrl(whiskers), connection(congctrl, serverip, serverport, sourceport, 1), src_id()
     {
         connection.congctrl_init();
 

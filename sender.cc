@@ -204,7 +204,7 @@ int main() {
 
     char data[20000];
     memset(data, '-', sizeof(char)*20000);
-    REMYSender sender(serverip, serverport, sourceport);
+    REMYSender sender("RemyCC-2014-100x.dna", serverip, serverport, sourceport);
     sender.send(data, 20000, 1);
     sender.send(data, 20000, 1);
 
