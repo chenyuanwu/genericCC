@@ -148,7 +148,8 @@ int main( int argc, char *argv[] ) {
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
 
-        CTCP< RemyCC > connection(RemyCC(parse_remy_config("RemyCC-2014-100x.dna")), serverip, serverport, sourceport, train_length );
+        whiskers = parse_remy_config("RemyCC-2014-100x.dna");
+		CTCP< RemyCC > connection(RemyCC(whiskers), serverip, serverport, sourceport, train_length );
         char data[20000];
         memset(data, '-', sizeof(char)*20000);
         connection.congctrl_init();
