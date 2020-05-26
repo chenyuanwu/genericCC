@@ -39,6 +39,8 @@ RemyCC parse_remy_config(string filename) {
 
 class REMYSender {
 private:
+    WhiskerTree whiskers;
+    RemyCC congctrl;
     CTCP< RemyCC > connection;
     int src_id;
 public:

@@ -42,7 +42,7 @@ WhiskerTree parse_remy_config(string filename) {
 
 int main( int argc, char *argv[] ) {
 	Memory temp;
-	WhiskerTree whiskers;
+	WhiskerTree whiskers(parse_remy_config("RemyCC-2014-100x.dna"));
 	//bool ratFound = false;
 
 	string serverip = "";
@@ -148,7 +148,7 @@ int main( int argc, char *argv[] ) {
 		//TrafficGenerator<CTCP<RemyCC>> traffic_generator( connection, onduration, offduration, traffic_params );
 		//traffic_generator.spawn_senders( 1 );
 
-        whiskers = parse_remy_config("RemyCC-2014-100x.dna");
+        //whiskers = parse_remy_config("RemyCC-2014-100x.dna");
         RemyCC congctrl( whiskers );
 		CTCP< RemyCC > connection(congctrl, serverip, serverport, sourceport, train_length );
         char data[20000];
