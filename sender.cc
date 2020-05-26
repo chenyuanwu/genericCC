@@ -167,6 +167,7 @@ std::string LINK_LOGGING_FILENAME;
 //}
 
 int main() {
+    Memory temp;
     string serverip = "34.73.231.168";
     int serverport=8888;
     int sourceport=0;
