@@ -11,7 +11,7 @@
 #include "ctcp.hh"
 
 
-RemyCC parse_remy_config(string filename) {
+WhiskerTree parse_remy_config(string filename) {
     WhiskerTree whiskers;
     int fd = open( filename.c_str(), O_RDONLY );
     if ( fd < 0 ) {
@@ -33,9 +33,9 @@ RemyCC parse_remy_config(string filename) {
         perror( "close" );
         exit( 1 );
     }
-    RemyCC congctrl( whiskers );
-    return congctrl;
+    return whiskers;
 }
+
 
 class REMYSender {
 private:
@@ -45,7 +45,7 @@ private:
     int src_id;
 public:
     REMYSender(string serverip, int serverport, int sourceport)
-            : connection(parse_remy_config("RemyCC-2014-100x.dna"), serverip, serverport, sourceport, 1), src_id()
+            : whiskers(parse_remy_config("RemyCC-2014-100x.dna")), congctrl(whiskers), connection(congctrl, serverip, serverport, sourceport, 1), src_id()
     {
         connection.congctrl_init();
 
